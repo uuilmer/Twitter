@@ -29,9 +29,9 @@ public class Tweet {
         this.retweeted = retweeted;
     }
     public static Tweet fromJSONObject(JSONObject obj) throws JSONException {
-        System.out.println(obj.toString());
-        JSONObject user = obj.getJSONObject("user");
+        JSONObject user = obj.getJSONObject("user"); //JSONObject containing info about the User who posted the Tweet
         JSONArray arr = null;
+        //If there is no picture, the API doesn't send back any field named "media", so we need to check if it is included
         if(obj.getJSONObject("entities").has("media"))
             arr = obj.getJSONObject("entities").getJSONArray("media");
         return new Tweet(obj.getLong("id"),
@@ -39,13 +39,17 @@ public class Tweet {
                 user.getString("screen_name"),
                 obj.getString("text"),
                 user.getString("profile_image_url_https"),
+
+                //Check if we found a field named "media"
                 arr != null ? arr.getJSONObject(0).getString("media_url_https") : "",
+
                 obj.getInt("favorite_count"),
                 obj.getInt("retweet_count"),
                 obj.getBoolean("favorited"),
                 obj.getBoolean("retweeted"));
     }
 
+    //Getters and Setters
     public String getPoster() {
         return poster;
     }
