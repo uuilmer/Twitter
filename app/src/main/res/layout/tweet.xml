@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/profile_pic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginRight="5dp"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/poster"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-black"
+                        android:includeFontPadding="false"
+                        tools:text="Wilmer Alexander" />
+
+                    <TextView
+                        android:id="@+id/poster_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        tools:text="wilmie" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tweet_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed-light"
+                    tools:text="hewabfehferb vbes vfkv fjiosv ejv jdsf vkfj vjief vejfv e" />
+
+                <ImageView
+                    android:id="@+id/picture"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    tools:src="@drawable/ic_launcher" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/reply"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_weight="33"
+                android:src="@drawable/reply" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/retweets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"
+                    android:layout_marginRight="2dp"
+                    android:gravity="center_vertical"
+                    tools:text="8" />
+
+                <ImageView
+                    android:id="@+id/retweet"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/retweet_0" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="33"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/likes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="15dp"
+                    android:layout_marginRight="2dp"
+                    tools:text="24" />
+
+                <ImageView
+                    android:id="@+id/like"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/like_0" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</RelativeLayout>
