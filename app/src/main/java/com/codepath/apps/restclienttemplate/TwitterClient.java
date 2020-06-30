@@ -9,14 +9,15 @@ import com.github.scribejava.apis.TwitterApi;
 import com.github.scribejava.core.builder.api.BaseApi;
 
 public class TwitterClient extends OAuthBaseClient {
-	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // WHAT IS THIS
+	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // NOTE: WHAT IS THIS
 
 	public static final String REST_URL = "https://api.twitter.com/1.1/";
 	public static final String REST_CONSUMER_KEY = BuildConfig.CONSUMER_KEY;
 	public static final String REST_CONSUMER_SECRET = BuildConfig.CONSUMER_SECRET;
 
-	public static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html"; // UNCLEAR
+	public static final String FALLBACK_URL = "https://codepath.github.io/android-rest-client-template/success.html"; // NOTE: UNCLEAR
 
+	//NOTE: Why intent? How does this work?
 	public static final String REST_CALLBACK_URL_TEMPLATE = "intent://%s#Intent;action=android.intent.action.VIEW;scheme=%s;package=%s;S.browser_fallback_url=%s;end";
 
 	public TwitterClient(Context context) { //WHERE IS THE TOKEN/KEY STORED??
@@ -28,10 +29,10 @@ public class TwitterClient extends OAuthBaseClient {
 				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
 	}
-	// CHANGE THIS
-	// DEFINE METHODS for different API endpoints here
+
 	public void getTimeline(JsonHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("statuses/home_timeline.json"); //Retrieve JSONArray from API to then convert into the List of Tweets
+		//Retrieve JSONArray from API to then convert into the List of Tweets
+		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
 		params.put("format", "json");
 		client.get(apiUrl, params, handler);
