@@ -80,12 +80,13 @@ public class TimelineActivity extends AppCompatActivity {
                 twAdapter.clear();
                 newFeed();
 
-                fresh.setRefreshing(false);
+                fresh.setRefreshing(false); // Need to ensure that this is false before notify change of tweets to adapter
             }
         });
     }
 
-    public void save(final List<Tweet> news){
+    // Asynch call the insert methods of tweetDao
+    public void save(final List<Tweet> news) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -140,15 +141,14 @@ public class TimelineActivity extends AppCompatActivity {
                 twAdapter.notifyDataSetChanged();
             }
 
+            // If we failed to connect to internet, fetch the saved db tweets
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                System.out.println("fail");
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
-                        twAdapter.clear();
+                        tweets.clear();
                         tweets.addAll(tweetDao.recent());
-                        System.out.println("yoooo" + tweets.size() + tweets.get(0).getText());
                         twAdapter.notifyDataSetChanged();
                     }
                 });
