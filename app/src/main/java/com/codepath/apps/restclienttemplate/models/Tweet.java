@@ -8,6 +8,7 @@ import org.parceler.Parcel;
 @Parcel
 public class Tweet {
     long id;
+    String date;
     String poster;
     String poster_username;
     String text;
@@ -22,7 +23,7 @@ public class Tweet {
     public Tweet() {
     }
 
-    public Tweet(long id, String poster, String poster_username, String text, String image, String media_url, int likes, int retweets, boolean favorited, boolean retweeted) {
+    public Tweet(long id, String poster, String poster_username, String text, String image, String media_url, int likes, int retweets, boolean favorited, boolean retweeted, String date) {
         this.id = id;
         this.poster = poster;
         this.poster_username = poster_username;
@@ -33,6 +34,7 @@ public class Tweet {
         this.media_url = media_url;
         this.favorited = favorited;
         this.retweeted = retweeted;
+        this.date = date;
     }
 
     public static Tweet fromJSONObject(JSONObject obj) throws JSONException {
@@ -53,7 +55,8 @@ public class Tweet {
                 obj.getInt("favorite_count"),
                 obj.getInt("retweet_count"),
                 obj.getBoolean("favorited"),
-                obj.getBoolean("retweeted"));
+                obj.getBoolean("retweeted"),
+                obj.getString("created_at"));
     }
 
     // Getters and Setters
@@ -111,5 +114,9 @@ public class Tweet {
 
     public void setRetweeted(boolean retweeted) {
         this.retweeted = retweeted;
+    }
+
+    public String getDate() {
+        return date;
     }
 }

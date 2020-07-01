@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.Adapters;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +22,11 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import okhttp3.Headers;
 
@@ -95,6 +99,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         ImageView content;
         ImageView like;
         ImageView retweet;
+        TextView time;
 
         // Save this Recycled View's child Views to later bind with different Tweets as we scroll
         public ViewHolder(@NonNull View itemView) {
@@ -108,6 +113,27 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             this.content = itemView.findViewById(R.id.picture);
             this.like = itemView.findViewById(R.id.like);
             this.retweet = itemView.findViewById(R.id.retweet);
+            this.time = itemView.findViewById(R.id.time);
+        }
+
+        //Method to convert Twitter API Tweet date to relative
+        public String getRelativeTime(String json_response) {
+            //Define the given format
+            String format = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+            SimpleDateFormat sf = new SimpleDateFormat(format, Locale.ENGLISH);
+            sf.setLenient(true);
+
+            String relativeDate = "";
+            try {
+                //Get Unix Epoch and get relative from today, then call toString to get readable difference
+                long dateMillis = sf.parse(json_response).getTime();
+                relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                        System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            return relativeDate;
         }
 
         // Change this Recycled View's child Views as we scroll
@@ -118,6 +144,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             // Set initial "Like" and "Retweet" count
             likes.setText("" + tweet.getLikes());
             retweets.setText("" + tweet.getRetweets());
+            time.setText("" + getRelativeTime(tweet.getDate()));
 
             // Features of Tweet that don't change
             poster.setText(tweet.getPoster()); // User who posted the Tweet...
