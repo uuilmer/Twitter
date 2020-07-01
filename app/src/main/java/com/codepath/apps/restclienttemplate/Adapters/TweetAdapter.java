@@ -119,6 +119,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             poster_username.setText(tweet.getPoster_username()); //...his username...
             Glide.with(context).load(tweet.getImage()).into(profile_pic); //...his profile picture
             text.setText(tweet.getText()); //The body of the Tweet
+
+            //Before checking if we should bind a different picture,
+            //ensure there if nothing, in case the previous tweet had a picture but this one doesn't
+            content.setImageResource(android.R.color.transparent);
+            content.setVisibility(View.GONE);
+
             if(!tweet.getMedia_url().equals("")) { //If the Tweet includes a picture, include it
                 Glide.with(context).load(tweet.getMedia_url()).into(content);
                 content.setVisibility(View.VISIBLE); //The ImageView for Tweet content is initially GONE, which assumes there is no picture
