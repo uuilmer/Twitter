@@ -53,7 +53,7 @@ public class TimelineActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONArray tw_arr = json.jsonArray;
                 //Get each JSONObject from the response and pass it to method that turns JSONObject's data to a Tweet object
-                for(int i = 0; i < tw_arr.length(); i++){
+                for (int i = 0; i < tw_arr.length(); i++) {
                     try {
                         tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
                     } catch (JSONException e) {
@@ -81,7 +81,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //If compose was pressed, go to ComposeTweetActivity
-        if(item.getItemId() == R.id.compose){
+        if (item.getItemId() == R.id.compose) {
             Intent i = new Intent(TimelineActivity.this, ComposeTweetActivity.class);
             //NOTE: Put extra??
             startActivityForResult(i, 100);
@@ -92,7 +92,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         //If request was successful
-        if(requestCode == 100 && resultCode == RESULT_OK){
+        if (requestCode == 100 && resultCode == RESULT_OK) {
             //Get the new Tweet and add to RecyclerView
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
             tweets.add(0, tweet);

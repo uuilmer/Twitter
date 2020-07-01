@@ -22,7 +22,7 @@ public class Tweet {
     public Tweet() {
     }
 
-    public Tweet(long id, String poster, String poster_username, String text, String image, String media_url, int likes, int retweets, boolean favorited, boolean retweeted){
+    public Tweet(long id, String poster, String poster_username, String text, String image, String media_url, int likes, int retweets, boolean favorited, boolean retweeted) {
         this.id = id;
         this.poster = poster;
         this.poster_username = poster_username;
@@ -34,11 +34,12 @@ public class Tweet {
         this.favorited = favorited;
         this.retweeted = retweeted;
     }
+
     public static Tweet fromJSONObject(JSONObject obj) throws JSONException {
         JSONObject user = obj.getJSONObject("user"); //JSONObject containing info about the User who posted the Tweet
         JSONArray arr = null;
         //If there is no picture, the API doesn't send back any field named "media", so we need to check if it is included
-        if(obj.getJSONObject("entities").has("media"))
+        if (obj.getJSONObject("entities").has("media"))
             arr = obj.getJSONObject("entities").getJSONArray("media");
         return new Tweet(obj.getLong("id"),
                 user.getString("name"),
