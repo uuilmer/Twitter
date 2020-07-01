@@ -1,22 +1,39 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 
 @Parcel
+@Entity
 public class Tweet {
+    @ColumnInfo
+    @PrimaryKey
     long id;
+    @ColumnInfo
     String date;
+    @ColumnInfo
     String poster;
+    @ColumnInfo
     String poster_username;
+    @ColumnInfo
     String text;
+    @ColumnInfo
     String image;
+    @ColumnInfo
     String media_url;
+    @ColumnInfo
     int likes;
+    @ColumnInfo
     int retweets;
+    @ColumnInfo
     boolean favorited;
+    @ColumnInfo
     boolean retweeted;
 
     // Required empty constructor for Parcel

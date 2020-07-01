@@ -7,10 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.Activities.ComposeTweetActivity;
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
@@ -19,6 +21,7 @@ import com.codepath.apps.restclienttemplate.Adapters.TweetAdapter;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.TweetDao;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -37,12 +40,15 @@ public class TimelineActivity extends AppCompatActivity {
     TweetAdapter twAdapter;
     RecyclerView rv;
     EndlessRecyclerViewScrollListener scrolling;
+    TweetDao tweetDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         rv = findViewById(R.id.recycle);
+
+        tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
 
         twClient = TwitterApp.getRestClient(this);
 
@@ -79,19 +85,31 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
+    public void save(final List<Tweet> news){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                tweetDao.insertModel(news.toArray(new Tweet[0]));
+            }
+        });
+    }
+
     private void loadNextPage() {
         twClient.loadNextPage(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONArray tw_arr = json.jsonArray;
                 // Get each JSONObject from the response and pass it to method that turns JSONObject's data to a Tweet object
+                List<Tweet> new_tweets = new ArrayList<>();
                 for (int i = 0; i < tw_arr.length(); i++) {
                     try {
-                        tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
+                        new_tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+                tweets.addAll(new_tweets);
+                save(new_tweets);
                 // Update the RecyclerView since Tweets were retrieved
                 twAdapter.notifyDataSetChanged();
             }
@@ -111,18 +129,29 @@ public class TimelineActivity extends AppCompatActivity {
                 // Get each JSONObject from the response and pass it to method that turns JSONObject's data to a Tweet object
                 for (int i = 0; i < tw_arr.length(); i++) {
                     try {
+                        System.out.println(tw_arr.getJSONObject(i).toString());
                         tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
                 // Update the RecyclerView since Tweets were retrieved
+                save(tweets);
                 twAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                System.out.println(throwable.toString());
+                System.out.println("fail");
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        twAdapter.clear();
+                        tweets.addAll(tweetDao.recent());
+                        System.out.println("yoooo" + tweets.size() + tweets.get(0).getText());
+                        twAdapter.notifyDataSetChanged();
+                    }
+                });
             }
         });
     }
