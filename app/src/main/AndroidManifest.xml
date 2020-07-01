@@ -14,9 +14,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity android:name=".Activities.ComposeTweetActivity"></activity>
-        <activity android:name=".TimelineActivity" />
+        <activity android:name=".Activities.TimelineActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme">
             <intent-filter>

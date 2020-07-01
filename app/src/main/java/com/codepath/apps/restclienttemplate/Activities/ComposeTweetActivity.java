@@ -10,9 +10,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,6 +57,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
             }
 
             @Override
@@ -86,14 +87,12 @@ public class ComposeTweetActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-
+                            Log.e("Error", "Error creating tweet", throwable);
                         }
                     });
                 }
-                else if(s.length() > 0)
-                    Toast.makeText(ComposeTweetActivity.this, "Enter text", Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(ComposeTweetActivity.this, "Too much text", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ComposeTweetActivity.this, s.length() > 0 ? "Enter text" : "Too much text", Toast.LENGTH_SHORT).show();
             }
         });
 
