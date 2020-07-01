@@ -8,15 +8,18 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.codepath.apps.restclienttemplate.Activities.ComposeTweetActivity;
+import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.Adapters.TweetAdapter;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -33,6 +36,7 @@ public class TimelineActivity extends AppCompatActivity {
     TwitterClient twClient;
     TweetAdapter twAdapter;
     RecyclerView rv;
+    EndlessRecyclerViewScrollListener scrolling;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +50,20 @@ public class TimelineActivity extends AppCompatActivity {
         tweets = new ArrayList<>();
         twAdapter = new TweetAdapter(this, tweets, twClient);
         rv.setAdapter(twAdapter);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rv.setLayoutManager(layoutManager);
         // Initially, get a new feed
         newFeed();
+
+        // As we scroll, keep loading the next page of 20 Tweets
+        scrolling = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextPage();
+            }
+        };
+
+        rv.addOnScrollListener(scrolling);
 
         // Prepare listeners for when we need to refresh
         final SwipeRefreshLayout fresh = findViewById(R.id.swipeContainer);
@@ -64,7 +79,31 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
-    public void newFeed(){
+    private void loadNextPage() {
+        twClient.loadNextPage(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                JSONArray tw_arr = json.jsonArray;
+                // Get each JSONObject from the response and pass it to method that turns JSONObject's data to a Tweet object
+                for (int i = 0; i < tw_arr.length(); i++) {
+                    try {
+                        tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                // Update the RecyclerView since Tweets were retrieved
+                twAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e("Error", "Loading next page of Tweets", throwable);
+            }
+        }, tweets.get(tweets.size() - 1).getId());
+    }
+
+    public void newFeed() {
         twClient.getTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {

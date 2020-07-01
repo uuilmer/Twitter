@@ -69,7 +69,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String s = new_tweet_text.getText().toString();
-                if(s.length() == 0){
+                if (s.length() == 0) {
                     Toast.makeText(ComposeTweetActivity.this, "Enter text", Toast.LENGTH_SHORT).show();
                     return;
                 }
