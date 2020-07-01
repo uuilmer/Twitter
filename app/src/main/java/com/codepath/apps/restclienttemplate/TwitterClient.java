@@ -38,6 +38,14 @@ public class TwitterClient extends OAuthBaseClient {
 		client.get(apiUrl, params, handler);
 	}
 
+	public void tweet(String tweet_text, JsonHttpResponseHandler handler) {
+		//Retrieve JSONArray from API to then convert into the List of Tweets
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams params = new RequestParams();
+		params.put("status", tweet_text);
+		client.post(apiUrl, params, "", handler);
+	}
+
 	//Send a create/destroy request into the correct endpoint to like/unlike a tweet
 	public void like(long id, JsonHttpResponseHandler handler){
 		String apiUrl = getApiUrl("favorites/create.json?id=" + id);

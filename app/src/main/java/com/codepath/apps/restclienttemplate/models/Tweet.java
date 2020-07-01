@@ -3,7 +3,9 @@ package com.codepath.apps.restclienttemplate.models;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
+@Parcel
 public class Tweet {
     long id;
     String poster;
@@ -15,6 +17,10 @@ public class Tweet {
     int retweets;
     boolean favorited;
     boolean retweeted;
+
+    //Required empty constructor for Parcel
+    public Tweet() {
+    }
 
     public Tweet(long id, String poster, String poster_username, String text, String image, String media_url, int likes, int retweets, boolean favorited, boolean retweeted){
         this.id = id;
