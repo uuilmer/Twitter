@@ -18,7 +18,7 @@ public class Tweet {
     boolean favorited;
     boolean retweeted;
 
-    //Required empty constructor for Parcel
+    // Required empty constructor for Parcel
     public Tweet() {
     }
 
@@ -36,9 +36,9 @@ public class Tweet {
     }
 
     public static Tweet fromJSONObject(JSONObject obj) throws JSONException {
-        JSONObject user = obj.getJSONObject("user"); //JSONObject containing info about the User who posted the Tweet
+        JSONObject user = obj.getJSONObject("user"); // JSONObject containing info about the User who posted the Tweet
         JSONArray arr = null;
-        //If there is no picture, the API doesn't send back any field named "media", so we need to check if it is included
+        // If there is no picture, the API doesn't send back any field named "media", so we need to check if it is included
         if (obj.getJSONObject("entities").has("media"))
             arr = obj.getJSONObject("entities").getJSONArray("media");
         return new Tweet(obj.getLong("id"),
@@ -47,7 +47,7 @@ public class Tweet {
                 obj.getString("text"),
                 user.getString("profile_image_url_https"),
 
-                //Check if we found a field named "media"
+                // Check if we found a field named "media"
                 arr != null ? arr.getJSONObject(0).getString("media_url_https") : "",
 
                 obj.getInt("favorite_count"),
@@ -56,7 +56,7 @@ public class Tweet {
                 obj.getBoolean("retweeted"));
     }
 
-    //Getters and Setters
+    // Getters and Setters
     public String getPoster() {
         return poster;
     }

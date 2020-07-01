@@ -31,7 +31,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     Context context;
     TwitterClient twClient;
 
-    //Save handler for later use (Refresh page so reload Tweets)
+    // Save handler for later use (Refresh page so reload Tweets)
     /*
     JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
         @Override
@@ -54,14 +54,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     };
     */
 
-    //TweetAdapter needs to have a TwitterClient defined to call its "like", "unlike", ect methods
+    // TweetAdapter needs to have a TwitterClient defined to call its "like", "unlike", ect methods
     public TweetAdapter(Context context, List<Tweet> tweets, TwitterClient twClient) {
         this.context = context;
         this.tweets = tweets;
         this.twClient = twClient;
     }
 
-    //Define layout for each Recycled View
+    // Define layout for each Recycled View
     @NonNull
     @Override
     public TweetAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -79,6 +79,16 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         return tweets.size();
     }
 
+    public void clear(){
+        tweets.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<Tweet> more){
+        tweets.addAll(more);
+        notifyDataSetChanged();
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView poster;
@@ -91,7 +101,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         ImageView like;
         ImageView retweet;
 
-        //Save this Recycled View's child Views to later bind with different Tweets as we scroll
+        // Save this Recycled View's child Views to later bind with different Tweets as we scroll
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.poster = itemView.findViewById(R.id.poster);
@@ -105,43 +115,43 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             this.retweet = itemView.findViewById(R.id.retweet);
         }
 
-        //Change this Recycled View's child Views as we scroll
+        // Change this Recycled View's child Views as we scroll
         public void bind(final Tweet tweet) {
             like.setImageResource(tweet.isFavorited() ? R.drawable.like_1 : R.drawable.like_0);
             retweet.setImageResource(tweet.isRetweeted() ? R.drawable.retweet_1 : R.drawable.retweet_0);
 
-            //Set initial "Like" and "Retweet" count
+            // Set initial "Like" and "Retweet" count
             likes.setText("" + tweet.getLikes());
             retweets.setText("" + tweet.getRetweets());
 
-            //Features of Tweet that don't change
-            poster.setText(tweet.getPoster()); //User who posted the Tweet...
-            poster_username.setText(tweet.getPoster_username()); //...his username...
-            Glide.with(context).load(tweet.getImage()).into(profile_pic); //...his profile picture
-            text.setText(tweet.getText()); //The body of the Tweet
+            // Features of Tweet that don't change
+            poster.setText(tweet.getPoster()); // User who posted the Tweet...
+            poster_username.setText(tweet.getPoster_username()); // ...his username...
+            Glide.with(context).load(tweet.getImage()).into(profile_pic); // ...his profile picture
+            text.setText(tweet.getText()); // The body of the Tweet
 
-            //Before checking if we should bind a different picture,
-            //ensure there if nothing, in case the previous tweet had a picture but this one doesn't
+            // Before checking if we should bind a different picture,
+            // ensure there if nothing, in case the previous tweet had a picture but this one doesn't
             content.setImageResource(android.R.color.transparent);
             content.setVisibility(View.GONE);
 
-            if (!tweet.getMedia_url().equals("")) { //If the Tweet includes a picture, include it
+            if (!tweet.getMedia_url().equals("")) { // If the Tweet includes a picture, include it
                 Glide.with(context).load(tweet.getMedia_url()).into(content);
-                content.setVisibility(View.VISIBLE); //The ImageView for Tweet content is initially GONE, which assumes there is no picture
+                content.setVisibility(View.VISIBLE); // The ImageView for Tweet content is initially GONE, which assumes there is no picture
             }
 
             // Set like and retweet buttons to "like" and "retweet" the appropriate Tweet
-            like.setOnClickListener(new View.OnClickListener() { //"Like" pressed
+            like.setOnClickListener(new View.OnClickListener() { // "Like" pressed
                 @Override
                 public void onClick(View view) {
                     if (tweet.isFavorited()) { // If Tweet was already "Liked"...
                         twClient.unlike(tweet.getId(), new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                                tweet.setFavorited(false); //...undo "Like"
-                                like.setImageResource(R.drawable.like_0); //Change icon to unliked
-                                tweet.setLikes(tweet.getLikes() - 1); //Reduce "Like" count
-                                likes.setText("" + tweet.getLikes()); //Update "Like" count displaying View
+                                tweet.setFavorited(false); // ...undo "Like"
+                                like.setImageResource(R.drawable.like_0); // Change icon to unliked
+                                tweet.setLikes(tweet.getLikes() - 1); // Reduce "Like" count
+                                likes.setText("" + tweet.getLikes()); // Update "Like" count displaying View
                             }
 
                             @Override
@@ -149,14 +159,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                                 Log.e("Error", "Error Unliking tweet", throwable);
                             }
                         });
-                    } else { //Case when "Disliked"
+                    } else { // Case when "Disliked"
                         twClient.like(tweet.getId(), new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Headers headers, JSON json) {
                                 tweet.setFavorited(true);
                                 like.setImageResource(R.drawable.like_1);
                                 tweet.setLikes(tweet.getLikes() + 1);
-                                likes.setText("" + tweet.getLikes()); //Update "Like" count displaying View
+                                likes.setText("" + tweet.getLikes()); // Update "Like" count displaying View
                             }
 
                             @Override
@@ -168,9 +178,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 }
             });
             retweet.setOnClickListener(new View.OnClickListener() {
-                //Same as before but for retweets
+                // Same as before but for retweets
                 @Override
-                public void onClick(View view) { //Same as Likes but for Retweets
+                public void onClick(View view) { // Same as Likes but for Retweets
                     if (tweet.isRetweeted()) {
                         twClient.unretweet(tweet.getId(), new JsonHttpResponseHandler() {
                             @Override

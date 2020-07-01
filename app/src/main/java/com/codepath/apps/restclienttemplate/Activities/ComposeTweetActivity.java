@@ -40,7 +40,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
 
         twitterClient = TwitterApp.getRestClient(this);
 
-        //Declare all Views
+        // Declare all Views
         cancel_tweet = findViewById(R.id.cancel_tweet);
         profile_pic = findViewById(R.id.profile_pic_compose);
         username = findViewById(R.id.username_compose);
@@ -53,7 +53,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
 
             }
 
-            //Everytime the new_tweet_text is changed and there is too many chars, make the commit Tweet button Visibility GONE
+            // Everytime the new_tweet_text is changed and there is too many chars, make the commit Tweet button Visibility GONE
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 create_tweet.setVisibility(charSequence.length() > 280 || charSequence.length() == 0 ? View.GONE : View.VISIBLE);
@@ -73,12 +73,12 @@ public class ComposeTweetActivity extends AppCompatActivity {
                     Toast.makeText(ComposeTweetActivity.this, "Enter text", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //When commit is clicked, call tweet() on inputed String
+                // When commit is clicked, call tweet() on inputed String
                 twitterClient.tweet(s, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         try {
-                            //On successful Tweet, go back to TimelineActivity
+                            // On successful Tweet, go back to TimelineActivity
                             Tweet tweet = Tweet.fromJSONObject(json.jsonObject);
                             Intent i = new Intent();
                             i.putExtra("tweet", Parcels.wrap(tweet));
@@ -97,6 +97,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
             }
         });
 
+        // If cancelled, go back to previous Activity
         cancel_tweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
