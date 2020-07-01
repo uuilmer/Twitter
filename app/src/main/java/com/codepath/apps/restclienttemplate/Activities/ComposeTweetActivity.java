@@ -47,6 +47,13 @@ public class ComposeTweetActivity extends AppCompatActivity {
         new_tweet_text = findViewById(R.id.new_tweet_text);
         create_tweet = findViewById(R.id.create_tweet);
 
+        //Retrieve whether we want to reply or compose a new tweet
+        final boolean reply = getIntent().getBooleanExtra("reply", false);
+
+        //If we want to reply, insert the person who we wish to reply to's username
+        if(reply)
+            new_tweet_text.setText("@" + getIntent().getStringExtra("reply_to") + " ");
+
         new_tweet_text.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -74,7 +81,11 @@ public class ComposeTweetActivity extends AppCompatActivity {
                     return;
                 }
                 // When commit is clicked, call tweet() on inputed String
-                twitterClient.tweet(s, new JsonHttpResponseHandler() {
+                long reply_to_id = -1;
+                if (reply) {
+                    reply_to_id = getIntent().getLongExtra("reply_to_id", 0);
+                }
+                twitterClient.tweet(s, reply_to_id, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
                         try {
@@ -91,7 +102,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e("Error", "Error creating tweet", throwable);
+                        Log.e("Error", throwable.getMessage());
                     }
                 });
             }

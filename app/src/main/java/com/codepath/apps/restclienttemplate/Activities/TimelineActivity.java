@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.ColumnInfo;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
@@ -12,6 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.Activities.ComposeTweetActivity;
@@ -48,13 +51,23 @@ public class TimelineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timeline);
         rv = findViewById(R.id.recycle);
 
+
         tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
 
         twClient = TwitterApp.getRestClient(this);
 
         // Create an Adapter to manage the RecyclerView
         tweets = new ArrayList<>();
-        twAdapter = new TweetAdapter(this, tweets, twClient);
+        twAdapter = new TweetAdapter(this, tweets, twClient, new TweetAdapter.OnClickReply() {
+            @Override
+            public void OnClick(Tweet tweet) {
+                Intent i = new Intent(TimelineActivity.this, ComposeTweetActivity.class);
+                i.putExtra("reply", true);
+                i.putExtra("reply_to_id", tweet.getId());
+                i.putExtra("reply_to", tweet.getPoster_username());
+                startActivityForResult(i, 200);
+            }
+        });
         rv.setAdapter(twAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
@@ -168,6 +181,7 @@ public class TimelineActivity extends AppCompatActivity {
         // If compose was pressed, go to ComposeTweetActivity
         if (item.getItemId() == R.id.compose) {
             Intent i = new Intent(TimelineActivity.this, ComposeTweetActivity.class);
+            i.putExtra("reply", false);
             // NOTE: Put extra??
             startActivityForResult(i, 100);
         }
@@ -177,7 +191,7 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         // If request was successful
-        if (requestCode == 100 && resultCode == RESULT_OK) {
+        if ((requestCode == 100 || requestCode == 200) && resultCode == RESULT_OK) {
             // Get the new Tweet and add to RecyclerView
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
             tweets.add(0, tweet);

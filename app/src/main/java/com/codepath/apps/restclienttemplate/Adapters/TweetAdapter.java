@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.Activities.ComposeTweetActivity;
+import com.codepath.apps.restclienttemplate.Activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -34,6 +37,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     List<Tweet> tweets;
     Context context;
     TwitterClient twClient;
+    OnClickReply ocr;
 
     // Save handler for later use (Refresh page so reload Tweets)
     /*
@@ -57,12 +61,17 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         }
     };
     */
+    // This will be used to handle moving to ComposeActivity when a movie is clicked
+    public interface OnClickReply {
+        public void OnClick(Tweet tweet);
+    }
 
     // TweetAdapter needs to have a TwitterClient defined to call its "like", "unlike", ect methods
-    public TweetAdapter(Context context, List<Tweet> tweets, TwitterClient twClient) {
+    public TweetAdapter(Context context, List<Tweet> tweets, TwitterClient twClient, OnClickReply ocr) {
         this.context = context;
         this.tweets = tweets;
         this.twClient = twClient;
+        this.ocr = ocr;
     }
 
     // Define layout for each Recycled View
@@ -100,6 +109,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
         ImageView like;
         ImageView retweet;
         TextView time;
+        ImageView reply;
 
         // Save this Recycled View's child Views to later bind with different Tweets as we scroll
         public ViewHolder(@NonNull View itemView) {
@@ -114,6 +124,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             this.like = itemView.findViewById(R.id.like);
             this.retweet = itemView.findViewById(R.id.retweet);
             this.time = itemView.findViewById(R.id.time);
+            this.reply = itemView.findViewById(R.id.reply);
         }
 
         //Method to convert Twitter API Tweet date to relative
@@ -236,6 +247,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                             }
                         });
                     }
+                }
+            });
+
+            //The reply button sends user to Compose activity with the tweet that they wish to reply to
+            reply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ocr.OnClick(tweet);
                 }
             });
 
