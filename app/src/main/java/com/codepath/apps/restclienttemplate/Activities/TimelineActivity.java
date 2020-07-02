@@ -4,22 +4,17 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.room.ColumnInfo;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
-import com.codepath.apps.restclienttemplate.Activities.ComposeTweetActivity;
 import com.codepath.apps.restclienttemplate.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.Adapters.TweetAdapter;
@@ -27,7 +22,6 @@ import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.TweetDao;
-import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -52,6 +46,8 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
         rv = findViewById(R.id.recycle);
+        // We can use this progress bar to tell Users when to wait to load
+        final ProgressBar loading = findViewById(R.id.pbLoading);
 
 
         tweetDao = ((TwitterApp) getApplicationContext()).getMyDatabase().tweetDao();
@@ -82,13 +78,17 @@ public class TimelineActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rv.setLayoutManager(layoutManager);
         // Initially, get a new feed
+        loading.setVisibility(View.VISIBLE);
         newFeed();
+        loading.setVisibility(View.GONE);
 
         // As we scroll, keep loading the next page of 20 Tweets
         scrolling = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loading.setVisibility(View.VISIBLE);
                 loadNextPage();
+                loading.setVisibility(View.GONE);
             }
         };
 
@@ -181,7 +181,12 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu that includes the "compose new Tweet" icon
+        //ActionBar bar = getActionBar();
+        //bar.setBackgroundDrawable(new ColorDrawable(Color.BLUE));
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        //getActionBar().setBackgroundDrawable(new ColorDrawable(Color.BLUE));
+
         return true;
     }
 
