@@ -69,6 +69,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-condensed-light"
+                    android:autoLink="all"
+                    android:linksClickable="true"
                     tools:text="hewabfehferb vbes vfkv fjiosv ejv jdsf vkfj vjief vejfv e" />
 
                 <ImageView

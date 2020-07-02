@@ -13,7 +13,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.ProfileActivity"></activity>
+        <activity android:name=".Activities.ProfileActivity" />
         <activity android:name=".Activities.ComposeTweetActivity" />
         <activity android:name=".Activities.TimelineActivity" />
         <activity

@@ -1,8 +1,6 @@
 package com.codepath.apps.restclienttemplate.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,21 +13,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.codepath.apps.restclienttemplate.Activities.ComposeTweetActivity;
-import com.codepath.apps.restclienttemplate.Activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.parceler.Parcel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import okhttp3.Headers;
 
@@ -112,26 +103,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             this.reply = itemView.findViewById(R.id.reply);
         }
 
-        //Method to convert Twitter API Tweet date to relative
-        public String getRelativeTime(String json_response) {
-            //Define the given format
-            String format = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-            SimpleDateFormat sf = new SimpleDateFormat(format, Locale.ENGLISH);
-            sf.setLenient(true);
-
-            String relativeDate = "";
-            try {
-                //Get Unix Epoch and get relative from today, then call toString to get readable difference
-                long dateMillis = sf.parse(json_response).getTime();
-                relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                        System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            return relativeDate;
-        }
-
         // Change this Recycled View's child Views as we scroll
         public void bind(final Tweet tweet) {
             like.setImageResource(tweet.isFavorited() ? R.drawable.like_1 : R.drawable.like_0);
@@ -140,7 +111,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
             // Set initial "Like" and "Retweet" count
             likes.setText("" + tweet.getLikes());
             retweets.setText("" + tweet.getRetweets());
-            time.setText("" + getRelativeTime(tweet.getDate()));
+            time.setText("" + tweet.getDate());
 
             // Features of Tweet that don't change
             poster.setText(tweet.getPoster()); // User who posted the Tweet...
@@ -234,7 +205,6 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                     }
                 }
             });
-
             //The reply button sends user to Compose activity with the tweet that they wish to reply to
             reply.setOnClickListener(new View.OnClickListener() {
                 @Override

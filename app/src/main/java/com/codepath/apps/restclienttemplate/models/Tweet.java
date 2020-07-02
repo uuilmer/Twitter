@@ -1,5 +1,7 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.text.format.DateUtils;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,6 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 @Parcel
 @Entity
@@ -53,8 +59,28 @@ public class Tweet {
         this.media_url = media_url;
         this.favorited = favorited;
         this.retweeted = retweeted;
-        this.date = date;
+        this.date = getRelativeTime(date);
         this.user_id = user_id;
+    }
+
+    //Method to convert Twitter API Tweet date to relative
+    public String getRelativeTime(String json_response) {
+        //Define the given format
+        String format = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(format, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            //Get Unix Epoch and get relative from today, then call toString to get readable difference
+            long dateMillis = sf.parse(json_response).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return relativeDate;
     }
 
     public static Tweet fromJSONObject(JSONObject obj) throws JSONException {
