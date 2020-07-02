@@ -67,6 +67,14 @@ public class TimelineActivity extends AppCompatActivity {
                 i.putExtra("reply_to", tweet.getPoster_username());
                 startActivityForResult(i, 200);
             }
+        }, new TweetAdapter.OnClickProfile() {
+            @Override
+            public void OnClick(Tweet tweet) {
+                Intent i = new Intent(TimelineActivity.this, ProfileActivity.class);
+                i.putExtra("username", tweet.getPoster_username());
+                i.putExtra("user_id", tweet.getUser_id());
+                startActivity(i);
+            }
         });
         rv.setAdapter(twAdapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -114,16 +122,16 @@ public class TimelineActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 JSONArray tw_arr = json.jsonArray;
                 // Get each JSONObject from the response and pass it to method that turns JSONObject's data to a Tweet object
-                List<Tweet> new_tweets = new ArrayList<>();
+                List<Tweet> newTweets = new ArrayList<>();
                 for (int i = 0; i < tw_arr.length(); i++) {
                     try {
-                        new_tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
+                        newTweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-                tweets.addAll(new_tweets);
-                save(new_tweets);
+                tweets.addAll(newTweets);
+                save(newTweets);
                 // Update the RecyclerView since Tweets were retrieved
                 twAdapter.notifyDataSetChanged();
             }
@@ -143,7 +151,6 @@ public class TimelineActivity extends AppCompatActivity {
                 // Get each JSONObject from the response and pass it to method that turns JSONObject's data to a Tweet object
                 for (int i = 0; i < tw_arr.length(); i++) {
                     try {
-                        System.out.println(tw_arr.getJSONObject(i).toString());
                         tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
                     } catch (JSONException e) {
                         e.printStackTrace();

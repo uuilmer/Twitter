@@ -38,40 +38,25 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     Context context;
     TwitterClient twClient;
     OnClickReply ocr;
+    OnClickProfile ocp;
 
-    // Save handler for later use (Refresh page so reload Tweets)
-    /*
-    JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
-        @Override
-        public void onSuccess(int statusCode, Headers headers, JSON json) {
-            JSONArray tw_arr = json.jsonArray;
-            for(int i = 0; i < tw_arr.length(); i++){
-                try {
-                    tweets.add(Tweet.fromJSONObject(tw_arr.getJSONObject(i)));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            notifyDataSetChanged();
-        }
+    // This will be used to handle moving to ProfileActivity when username is clicked
+    public interface OnClickProfile {
+        public void OnClick(Tweet tweet);
+    }
 
-        @Override
-        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-            System.out.println("ERROR GETTING TIMELINE");
-        }
-    };
-    */
     // This will be used to handle moving to ComposeActivity when a movie is clicked
     public interface OnClickReply {
         public void OnClick(Tweet tweet);
     }
 
     // TweetAdapter needs to have a TwitterClient defined to call its "like", "unlike", ect methods
-    public TweetAdapter(Context context, List<Tweet> tweets, TwitterClient twClient, OnClickReply ocr) {
+    public TweetAdapter(Context context, List<Tweet> tweets, TwitterClient twClient, OnClickReply ocr, OnClickProfile ocp) {
         this.context = context;
         this.tweets = tweets;
         this.twClient = twClient;
         this.ocr = ocr;
+        this.ocp = ocp;
     }
 
     // Define layout for each Recycled View
@@ -255,6 +240,13 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
                 @Override
                 public void onClick(View view) {
                     ocr.OnClick(tweet);
+                }
+            });
+
+            poster_username.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ocp.OnClick(tweet);
                 }
             });
 

@@ -30,10 +30,18 @@ public class TwitterClient extends OAuthBaseClient {
                         context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
     }
 
+    //Send user_id to endpoint to get friends list
+    public void getFriends(int user_id, JsonHttpResponseHandler handler, boolean following){
+        String apiUrl = getApiUrl((following ? "friends" : "followers") + "/list.json");
+        RequestParams params = new RequestParams();
+        params.put("user_id", user_id);
+        params.put("count", 200);
+        client.get(apiUrl, params, handler);
+    }
+
     public void getTimeline(JsonHttpResponseHandler handler) {
         // Retrieve JSONArray from API to then convert into the List of Tweets
         String apiUrl = getApiUrl("statuses/home_timeline.json");
-        System.out.println(apiUrl);
         RequestParams params = new RequestParams();
         params.put("format", "json");
         client.get(apiUrl, params, handler);

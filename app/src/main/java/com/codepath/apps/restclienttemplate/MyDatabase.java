@@ -8,7 +8,7 @@ import com.codepath.apps.restclienttemplate.models.SampleModelDao;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.TweetDao;
 
-@Database(entities = {SampleModel.class, Tweet.class}, version = 2)
+@Database(entities = {SampleModel.class, Tweet.class}, version = 3)
 public abstract class MyDatabase extends RoomDatabase {
     public abstract SampleModelDao sampleModelDao();
     public abstract TweetDao tweetDao();

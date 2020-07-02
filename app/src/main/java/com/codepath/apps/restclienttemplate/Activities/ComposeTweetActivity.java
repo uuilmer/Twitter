@@ -38,6 +38,8 @@ public class ComposeTweetActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_compose_tweet);
 
+
+
         twitterClient = TwitterApp.getRestClient(this);
 
         // Declare all Views
@@ -103,6 +105,7 @@ public class ComposeTweetActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                         Log.e("Error", throwable.getMessage());
+                        // ADD
                     }
                 });
             }

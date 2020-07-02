@@ -28,6 +28,7 @@ android {
         lintConfig rootProject.file('gradle/lint.xml')
     }
 
+
     buildTypes {
         release {
             minifyEnabled false
