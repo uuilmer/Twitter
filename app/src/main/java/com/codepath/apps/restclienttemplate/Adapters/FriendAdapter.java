@@ -11,18 +11,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.codepath.apps.restclienttemplate.Activities.ProfileActivity.Friend;
 import com.codepath.apps.restclienttemplate.R;
-import com.github.scribejava.core.extractors.TokenExtractor;
 
 import java.util.List;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
     List<Friend> friends;
     Context context;
+    OnClickUser ocu;
 
-    public FriendAdapter(Context context, List<Friend> friends){
+    // This will happen when we click a follower/following
+    public interface OnClickUser {
+        public void onClick(Friend friend);
+    }
+
+    public FriendAdapter(Context context, List<Friend> friends, OnClickUser ocu) {
         this.friends = friends;
         this.context = context;
+        this.ocu = ocu;
     }
+
     @NonNull
     @Override
     public FriendAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -40,7 +47,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         return friends.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView name;
         TextView username;
@@ -50,9 +57,18 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             name = itemView.findViewById(R.id.friend_name);
             username = itemView.findViewById(R.id.friend_username);
         }
-        public void bind(Friend friend){
+
+        public void bind(final Friend friend) {
             this.name.setText("" + friend.getName());
             this.username.setText("" + friend.getUsername());
+
+            // If a follower or following is pressed, call the handler we got
+            username.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ocu.onClick(friend);
+                }
+            });
         }
     }
 }

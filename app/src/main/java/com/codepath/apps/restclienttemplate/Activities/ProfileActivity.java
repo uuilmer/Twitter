@@ -39,42 +39,61 @@ public class ProfileActivity extends AppCompatActivity {
         final List<Friend> following = new ArrayList<>();
         final List<Friend> followers = new ArrayList<>();
 
+        // Get both RecyclerViews
         rvFollowing = findViewById(R.id.following);
         rvFollowers = findViewById(R.id.followers);
 
         twClient = TwitterApp.getRestClient(this);
 
-        //Get values passed from TimelineActivity for this user
+        // Get values passed from TimelineActivity for this user
         String username = getIntent().getStringExtra("username");
         user_id = getIntent().getIntExtra("user_id", 0);
 
-        ((TextView)findViewById(R.id.friend_username)).setText("" + username);
+        // Set the current User we are viewing's name
+        ((TextView) findViewById(R.id.friend_username)).setText("" + username);
 
-        FriendAdapter followingAdapter = new FriendAdapter(ProfileActivity.this, following);
-        FriendAdapter followersAdapter = new FriendAdapter(ProfileActivity.this, followers);
+        // This is what happens if we click on a follower or following
+        FriendAdapter.OnClickUser ocu = new FriendAdapter.OnClickUser() {
+            @Override
+            public void onClick(Friend friend) {
+                // Go to their ProfileActivity
+                Intent i = new Intent(ProfileActivity.this, ProfileActivity.class);
+                i.putExtra("username", friend.getName());
+                i.putExtra("user_id", friend.getUser_id());
+                startActivity(i);
+            }
+        };
+
+        // Set up two adapters
+        FriendAdapter followingAdapter = new FriendAdapter(ProfileActivity.this, following, ocu);
+        FriendAdapter followersAdapter = new FriendAdapter(ProfileActivity.this, followers, ocu);
         rvFollowing.setAdapter(followingAdapter);
         rvFollowers.setAdapter(followersAdapter);
 
         rvFollowing.setLayoutManager(new LinearLayoutManager(this));
         rvFollowers.setLayoutManager(new LinearLayoutManager(this));
 
+        // Get the data we need for both
         getPeople(following, true, followingAdapter);
         getPeople(followers, false, followersAdapter);
 
 
     }
-    public void getPeople(final List<Friend> toAddTo, boolean getFollowing, final FriendAdapter adapter){
-        //Perform the search and update into the RecyclerView
+
+    public void getPeople(final List<Friend> toAddTo, boolean getFollowing, final FriendAdapter adapter) {
+        // Perform the search and update into the RecyclerView
         twClient.getFriends(user_id, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
                 try {
                     JSONArray users = json.jsonObject.getJSONArray("users");
-                    for(int i = 0; i < users.length(); i++){
+                    for (int i = 0; i < users.length(); i++) {
+                        // Populate the ArrayLists and notify Adapters
                         JSONObject friend = users.getJSONObject(i);
                         Friend curr = new Friend();
                         curr.name = friend.getString("name");
                         curr.username = friend.getString("screen_name");
+                        curr.user_id = friend.getInt("id");
                         toAddTo.add(curr);
                         adapter.notifyDataSetChanged();
                     }
@@ -87,11 +106,14 @@ public class ProfileActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
                 Log.e("Error", "Error retrieving people list", throwable);
             }
+            // getFollowing triggers message being sent to a different endpoint
         }, getFollowing);
     }
-    public class Friend{
+
+    public class Friend {
         String name;
         String username;
+        int user_id;
 
         public String getName() {
             return name;
@@ -99,6 +121,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         public String getUsername() {
             return username;
+        }
+
+        public int getUser_id() {
+            return user_id;
         }
     }
 }
